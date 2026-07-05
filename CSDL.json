@@ -9,9 +9,9 @@
     },
     "correct": [
       "A",
-      "C"
+      "D"
     ],
-    "explanation": "Để thêm dữ liệu với INSERT, số lượng và kiểu giá trị phải khớp với cấu trúc bảng. Bảng 'sinhvien' yêu cầu 3 cột bắt buộc (NOT NULL). Đáp án A sai vì chỉ truyền 2 giá trị. Đáp án C sai do cột 'Gioitinh' định nghĩa là kiểu boolean nhưng lại truyền giá trị số nguyên '2'. Đáp án D cũng sẽ lỗi do thiếu cột 'Gioitinh', nhưng theo barem hệ thống, A và C được ghi nhận là các câu lệnh chứa lỗi cú pháp và sai kiểu dữ liệu trực tiếp nhất khiến lệnh thất bại ngay từ quá trình phân tích (parse). B đúng cú pháp hoàn toàn."
+    "explanation": "INSERT phải cung cấp giá trị hợp lệ cho đủ 3 cột NOT NULL (MSSV, Hoten, Gioitinh), trừ khi liệt kê tên cột và bỏ qua cột có DEFAULT (ở đây không cột nào có DEFAULT). A chỉ truyền 2 giá trị cho 3 cột bắt buộc -> chắc chắn lỗi. D bỏ qua cột Gioitinh (NOT NULL, không DEFAULT) -> chắc chắn lỗi vi phạm ràng buộc NOT NULL. B hợp lệ (đủ 3 cột, đúng kiểu). C gán số nguyên 2 cho cột boolean: trong MySQL, BOOLEAN là bí danh của TINYINT(1) nên giá trị 2 vẫn được chấp nhận (không lỗi), do đó không thể khẳng định C 'chắc chắn' thất bại. Vậy đáp án đúng là A và D."
   },
   {
     "Ques": "Một CSDL gồm các quan hệ sau: NhanVien (NV, HoTen, NamSinh) DuAn(DA, TenDA, KinhPhi) ThamGia(NV, DA, MucLuong) Cho câu lệnh SQL sau:SELECT NV, HoTen FROM NhanVien, ThamGia WHERE NhanVien.NV = ThamGia.NV AND DA='P01' INTERSECT SELECT NV, HoTen FROM NhanVien, ThamGia WHERE NhanVien.NV = ThamGia.NV AND DA='P02'; Nhận định nào dưới đây là đúng?",
@@ -98,8 +98,8 @@
       "C": "2NF",
       "D": "3NF"
     },
-    "correct": "C",
-    "explanation": "Các khóa ứng viên của lược đồ là AB, BC, AC (do AB->C, BC->A, AC->B, dẫn đến việc đóng bao của chúng đều phủ toàn bộ U). Thuộc tính D là thuộc tính không khóa duy nhất. Xét dạng chuẩn 2 (2NF): Rạt 2NF nếu mọi thuộc tính không khóa đều phụ thuộc ĐẦY ĐỦ vào khóa ứng viên. Ta có BC -> D, trong đó BC là khóa ứng viên, nên D phụ thuộc đầy đủ vào BC. R không có phụ thuộc một phần nào nên chắc chắn đạt 2NF. Theo đáp án đề thi ghi nhận, C là bậc chuẩn cao nhất được khẳng định an toàn cho cấu trúc này."
+    "correct": "D",
+    "explanation": "Quan hệ R đạt dạng chuẩn 3 (3NF) vì tất cả các vế trái của mọi phụ thuộc hàm đã cho (AB, BC, AC) đều là khóa ứng viên. Điều này triệt tiêu hoàn toàn khả năng xảy ra phụ thuộc một phần (vi phạm 2NF) hoặc phụ thuộc bắc cầu (vi phạm 3NF) đối với thuộc tính không khóa duy nhất là D."
   },
   {
     "Ques": "Cho một cơ sở dữ liệu gồm các quan hệ: NhanVien (MaNV, TenNV, DiaChi, NamSinh, MaPh, MaCV) Phong (MaPh, TenPh, DiaChi, Tel) CongViec (MaCV, TenCV, Cap, KinhPhi) Trong đó, khóa chính được in đậm và gạch dưới, khóa ngoài được in nghiêng. Chọn biểu diễn SQL của yêu cầu: Đưa ra tên của các phòng mà không có một nhân viên nào có địa chỉ ở Hà Nội'.",
@@ -165,10 +165,11 @@
       "A": "6",
       "B": "Đáp án khác",
       "C": "7",
-      "D": "9 (hoặc 8)"
+      "D": "9",
+      "E": "8"
     },
-    "correct": "A",
-    "explanation": "Áp dụng thuật toán tổng hợp 3NF: Bước 1: Phủ tối thiểu Fm = {A->D, A->E, D->C} (AE->D lược bỏ E do A->E). Bước 2: Tạo sơ đồ con theo vế trái chung: R1(ADE), R2(DC). X=2. Bước 3: Tìm khóa gốc. Khóa là AB. Vì AB không nằm trong R1 hay R2, ta thêm R3(AB). X tăng thành 3 (R1, R2, R3). Số lần A xuất hiện (Y) nằm ở R1(ADE) và R3(AB) nên Y=2. Vậy X+Y = 3+2 = 5. Tuy nhiên, nếu không gộp vế trái, các sơ đồ là AD, AE, DC, AB (X=4), A xuất hiện 3 lần (Y=3) dẫn tới X+Y=7. Đáp án A (6) được hệ thống chọn có thể do biến thể đếm X=3 và Y=3, cần theo barem này."
+    "correct": "B",
+    "explanation": "Tìm phủ tối thiểu: Fm = {A->D, A->E, D->C} (vì AE->D rút gọn còn A->D do A->E đã có sẵn E). Nhóm theo vế trái chung: R1(A,D,E), R2(D,C). Tìm khóa của U={A,B,C,D,E}: vì B không xuất hiện ở vế phải bất kỳ FD nào, B phải có trong mọi khóa; kiểm tra (AB)+ = {A,B,C,D,E} = U, nên khóa là AB. Vì AB không nằm trọn trong R1 hay R2, cần bổ sung R3(A,B). Vậy X = 3 (R1, R2, R3), và A xuất hiện ở R1 và R3 nên Y = 2. X+Y = 3+2 = 5. Vì 5 không có trong các lựa chọn số cụ thể (6, 7, 9, 8), đáp án đúng là 'Đáp án khác'."
   },
   {
     "Ques": "Cho lược đồ quan hệ R(A, B, C) với tập phụ thuộc hàm F={A->B; B->C}. R ở dạng chuẩn cao nhất nào trong số các chuẩn sau:",
@@ -197,14 +198,14 @@
     "Ans": {
       "A": "min(m,n)",
       "B": "m*n",
-      "C": "Chưa đủ thông tin",
-      "D": "m+n (hoặc max(m,n))"
+      "C": "max(m,n)",
+      "D": "m+n"
     },
     "correct": "D",
     "explanation": "Trong lý thuyết Đại số quan hệ, Bậc (Degree/Arity) của một quan hệ chính là số lượng thuộc tính (cột) của nó. Phép tích Đề-các (Cartesian Product), ký hiệu R x S, thực hiện ghép nối mọi bản ghi của bảng R với mọi bản ghi của bảng S. Quan hệ kết quả sinh ra sẽ chứa tất cả các thuộc tính của R ghép với tất cả các thuộc tính của S. Do đó, tổng số cột (bậc) của kết quả chính là tổng bậc của hai quan hệ thành phần, tức là m + n. Đáp án D phản ánh chuẩn xác quy luật này."
   },
   {
-    "Ques": "Cho schema của một DB như sau: SINHVIEN (MASV, TENSV, EMAIL, SDT, NGAYSINH) HOCPHAN(MAHP, TENHP, LOAIHP, SOTINCHI) LOPHOCPHAN(MALHP, MAHP, HOCKY, NAMНОС) DANGKY(MASV, MALHP) Cho câu lệnh sau: SELECT COUNT(SDT) FROM SINHVIEN; Kết quả của câu lệnh trên là gì?",
+    "Ques": "Cho schema của một DB như sau: SINHVIEN (MASV, TENSV, EMAIL, SDT, NGAYSINH) HOCPHAN(MAHP, TENHP, LOAIHP, SOTINCHI) LOPHOCPHAN(MALHP, MAHP, HOCKY, NAMHOC) DANGKY(MASV, MALHP) Cho câu lệnh sau: SELECT COUNT(SDT) FROM SINHVIEN; Kết quả của câu lệnh trên là gì?",
     "Ans": {
       "A": "Tổng số sinh viên",
       "B": "Số sinh viên có số điện thoại khác NULL",
@@ -235,10 +236,10 @@
     },
     "correct": [
       "A",
-      "B",
+      "C",
       "D"
     ],
-    "explanation": "Tính chất ACID định nghĩa độ tin cậy của giao dịch. Isolation (Cách ly) đảm bảo tính độc lập khi thực thi đồng thời (A đúng), và ở mức độ nghiêm ngặt nhất (Serializable), nó giới hạn tài nguyên như thể chạy tuần tự từng giao dịch một (B được xem là đúng trong bối cảnh học thuật này). Durability (Bền vững) khẳng định dữ liệu lưu trữ an toàn sau lệnh COMMIT bất chấp lỗi phần cứng (D đúng). Mặc dù C (Atomicity - Nguyên tố) phát biểu đúng lý thuyết, đáp án chuẩn của đề bài chỉ ghi nhận A, B, và D."
+    "explanation": "Tính chất ACID: Isolation (Cách ly) đảm bảo một giao dịch không bị ảnh hưởng bởi các giao dịch khác đang chạy đồng thời (A đúng). Atomicity (Nguyên tố) đảm bảo giao dịch được thực hiện toàn bộ hoặc không thực hiện gì (C đúng - đây là định nghĩa kinh điển của Atomicity). Durability (Bền vững) đảm bảo dữ liệu không mất sau khi COMMIT dù hệ thống gặp sự cố (D đúng). Đáp án B sai vì Isolation không có nghĩa là chỉ một giao dịch được phép chạy tại một thời điểm (đó là mô tả quá chặt, chỉ đúng với cơ chế khóa toàn cục ở mức Serializable, không phải định nghĩa chung của Isolation). Vậy các phát biểu đúng là A, C, D."
   },
   {
     "Ques": "Khẳng định nào sau đây là đúng ?",
@@ -303,12 +304,8 @@
       "C": "Hai dạng chuẩn này không liên quan tới nhau",
       "D": "BCNF <-> 3N"
     },
-    "correct": [
-      "A",
-      "C",
-      "D"
-    ],
-    "explanation": "Về phương diện toán học CSDL chuẩn, BCNF (Boyce-Codd) là dạng chuẩn khắt khe hơn 3NF. Mọi lược đồ đạt BCNF chắc chắn đã loại bỏ mọi dị thường và đạt 3NF (tức A đúng: BCNF suy ra 3NF). Tuy nhiên, đáp án gốc được ghi nhận bao gồm cả C và D. Về học thuật, C và D là phát biểu sai. Việc hệ thống ghi nhận nhiều lựa chọn này có thể do lỗi nhập liệu của bộ đề hoặc ý đồ đặc thù riêng biệt. Sinh viên cần ưu tiên ghi nhớ cốt lõi lý thuyết là mệnh đề A."
+    "correct": "A",
+    "explanation": "Về mặt lý thuyết chuẩn hóa CSDL, BCNF (Boyce-Codd Normal Form) là dạng chuẩn chặt hơn 3NF: mọi lược đồ đạt BCNF thì chắc chắn cũng đạt 3NF (BCNF -> 3NF), nên phát biểu A đúng. Chiều ngược lại (3NF -> BCNF) không luôn đúng vì tồn tại lược đồ đạt 3NF nhưng không đạt BCNF. Hai dạng chuẩn này có quan hệ bao hàm rõ ràng (không phải 'không liên quan'), và BCNF không tương đương 3NF (không phải quan hệ hai chiều <->). Vậy đáp án đúng duy nhất là A."
   },
   {
     "Ques": "Cho lược đồ quan hệ Q(A, B, C, D), với phụ thuộc hàm F = {AB->C; D->B; C->ABD} ở dạng chuẩn cao nhất nào trong số các chuẩn sau",
@@ -340,8 +337,8 @@
       "C": "sử dụng các câu truy vấn và cập nhật, lưu trữ dữ liệu",
       "D": "đọc và ghi"
     },
-    "correct": "B",
-    "explanation": "Theo chuẩn SQL quốc tế, quyền READ (hoặc SELECT) chỉ cho phép người dùng truy vấn và đọc dữ liệu, tương ứng với phương án A. Tuy nhiên, theo barem đáp án gốc được cung cấp của câu hỏi này, lựa chọn B ('sửa đổi, bổ sung...') lại được ghi nhận là đúng. Đây là một sự sai lệch rất lớn so với lý thuyết CSDL chuẩn. Khi học sinh viện dẫn tài liệu này, cần chú ý phân biệt rõ giữa kiến thức thực tế (A) và quy ước sai sót của chính bộ đề thi nội bộ (B)."
+    "correct": "A",
+    "explanation": "Theo chuẩn SQL, quyền READ (hay SELECT) chỉ cho phép người dùng truy vấn (đọc) dữ liệu, không được phép sửa đổi hay bổ sung dữ liệu. Đáp án A phản ánh đúng bản chất của quyền này. Các đáp án B, C, D đều mô tả các quyền ghi/cập nhật dữ liệu, vốn thuộc về các quyền khác như INSERT, UPDATE, chứ không phải quyền READ."
   },
   {
     "Ques": "Phát biểu nào dưới đây là SAI ?",
@@ -395,8 +392,8 @@
       "C": "2NF",
       "D": "3NF"
     },
-    "correct": "D",
-    "explanation": "Đây là sự mâu thuẫn so với tính toán chuẩn. Khóa của lược đồ là AB. C, D, E là thuộc tính không khóa. Nhận thấy B->C, C phụ thuộc vào B là một tập con thực sự của khóa AB. Đây là phụ thuộc một phần (Partial Dependency), nên R đáng lẽ vi phạm 2NF và chỉ đạt chuẩn cao nhất là 1NF. Tuy nhiên, theo dữ liệu barem gốc cung cấp, đáp án D (3NF) lại được chọn. Sinh viên cần cẩn trọng ghi nhận đáp án này khi đối phó với bộ câu hỏi cụ thể, dù nó sai biệt với lý thuyết CSDL."
+    "correct": "A",
+    "explanation": "Khóa của lược đồ R(A,B,C,D,E) với F={AB->E, B->C, ABC->D, A->C} là AB (vì (AB)+ = ABCDE). Các thuộc tính không khóa là C, D, E. Vì có phụ thuộc hàm B->C (B là một tập con thực sự của khóa AB), thuộc tính không khóa C phụ thuộc một phần vào khóa, vi phạm 2NF. Do các thuộc tính đều chỉ nhận giá trị nguyên tố (đạt 1NF), nhưng vi phạm 2NF, nên dạng chuẩn cao nhất mà R đạt được chỉ là 1NF. Đáp án đúng là A."
   },
   {
     "Ques": "Cho câu lệnh SQL sau: SELECT sname FROM S, SP WHERE S.sid = SP.sid AND pid = 'P1'Hãy chọn Cây toán tử (Query Tree) biểu diễn đúng nhất quy trình thực thi logic của câu lệnh trên:",
@@ -431,8 +428,8 @@
       "C": "SELECT HoTen, COUNT(DA) FROM NhanVien, ThamGia WHERE NhanVien.NV = ThamGia.NV GROUP BY NV",
       "D": "SELECT HoTen, SUM(DA) FROM NhanVien, ThamGia WHERE NhanVien.NV = ThamGia.NV GROUP BY NhanVien.NV"
     },
-    "correct": "A",
-    "explanation": "Truy vấn yêu cầu gom nhóm dữ liệu theo từng nhân viên và đếm số lượng. Theo lý thuyết SQL chuẩn, đáp án B hoặc C (dùng GROUP BY NhanVien.NV và đếm COUNT(DA)) mới là chính xác. Việc gom nhóm theo mã dự án `NhanVien.DA` (như trong đáp án A) sẽ dẫn đến lỗi logic. Tuy nhiên, đáp án gốc cung cấp cho câu hỏi này lại khẳng định A là phương án đúng. Sự bất hợp lý này tồn tại trong đề bài, và sinh viên buộc phải tuân theo lựa chọn được cấu hình sẵn trong hệ thống thi."
+    "correct": "B",
+    "explanation": "Truy vấn cần đưa ra HoTen và số dự án mỗi nhân viên tham gia, nghĩa là phải gom nhóm theo từng nhân viên rồi đếm số bản ghi DA tương ứng. Đáp án B thực hiện đúng: JOIN NhanVien với ThamGia theo NV, GROUP BY NhanVien.NV (rõ ràng không mơ hồ vì có chỉ định tên bảng), và COUNT(DA) đếm số dự án. Đáp án C viết 'GROUP BY NV' không chỉ định bảng trong khi cột NV tồn tại ở cả hai bảng NhanVien và ThamGia, gây lỗi tham chiếu cột mơ hồ (ambiguous column). Đáp án A gom nhóm sai theo NhanVien.DA (cột không tồn tại ở bảng NhanVien) nên sai cú pháp/logic. Đáp án D dùng SUM(DA) là sai vì DA là mã dự án (không phải số cần cộng dồn). Vậy đáp án đúng là B."
   },
   {
     "Ques": "NhaHang ( MaNH, TenNH, DiaChi, SoDienThoai) NguoiDung ( MaNSD, HoTen, SDT, Email) DanhGia ( MaNSD, MaNH, DiemSo, YeuThich) Biểu thức đại số nào mô tả yêu cầu: Liệt kê số điện thoại những nhà hàng được khách hàng có tên 'Monte Carlos' đánh giá từ 8 điểm trở lên (trường DiemSo).",
@@ -442,11 +439,8 @@
       "C": "Π_SoDienThoai ((NhaHang * Π_MaNSD (σ_HoTen='Monte Carlos' (NguoiDung))) * σ_DiemSo>=8 (DanhGia))",
       "D": "Π_SoDienThoai (NhaHang * σ_DiemSo>=8 (DanhGia) * Π_MaNSD (σ_HoTen='Monte Carlos'(NguoiDung)))"
     },
-    "correct": [
-      "A",
-      "D"
-    ],
-    "explanation": "Đại số quan hệ yêu cầu lọc điều kiện trước kết nối (JOIN). Lọc NguoiDung: `σ_HoTen='Monte Carlos'(NguoiDung)`, sau đó lấy mã: `Π_MaNSD`. Lọc DanhGia: `σ_DiemSo>=8 (DanhGia)`. Ta kết nối hai phần này với bảng NhaHang và cuối cùng chiếu `Π_SoDienThoai` để lấy đích danh số điện thoại nhà hàng. D là biểu thức đầy đủ thực hiện kết nối đúng 3 bảng và chiếu cuối cùng (Đúng). Mặc dù A thiếu kết nối với NhaHang (do đó SoDienThoai không tồn tại trong DanhGia/NguoiDung, gây lỗi logic toán học), nhưng barem gốc vẫn ghi nhận A và D."
+    "correct": "D",
+    "explanation": "Yêu cầu cần lấy SoDienThoai của NhaHang, nên biểu thức bắt buộc phải kết nối (join) với quan hệ NhaHang. Đáp án D thực hiện đầy đủ: lọc NguoiDung theo tên 'Monte Carlos' rồi chiếu MaNSD, kết nối với DanhGia đã lọc DiemSo>=8, sau đó kết nối với NhaHang, và cuối cùng chiếu SoDienThoai. Đáp án A thiếu hẳn phần kết nối với quan hệ NhaHang nên không thể chiếu ra SoDienThoai (thuộc tính này không tồn tại ở DanhGia hay NguoiDung), khiến biểu thức không hợp lệ. Vậy đáp án đúng là D."
   },
   {
     "Ques": "Yêu cầu truy vấn: Đưa ra danh sách sinh viên đã đăng ký môn 'Hệ phân tán', sắp xếp theo học kỳ đăng ký. Hãy chọn câu lệnh SQL cho phép thực hiện yêu cầu trên",
@@ -456,22 +450,18 @@
       "C": "SELECT s.* FROM Sinhvien s, Dangky d WHERE s.MaSV = d.MaSV AND TenMH = 'He phan tan' ORDER BY Hocky;",
       "D": "SELECT s.* FROM Sinhvien s, DangKy d, Monhoc m WHERE s.MaSV = d.MaSV AND m.MaMH = d.MaMH AND TenMH = 'He phan tan' ORDER BY Hocky;"
     },
-    "correct": "A",
-    "explanation": "Truy vấn hợp lệ yêu cầu kết nối 3 bảng bằng khóa chung: Sinhvien (MaSV) - Dangky - Monhoc (MaMH). Lệnh D cung cấp đầy đủ liên kết `s.MaSV = d.MaSV AND m.MaMH = d.MaMH` mới là mệnh đề đúng đắn nhất. Ngược lại, Lệnh A thiếu sót điều kiện `s.MaSV = d.MaSV`, dẫn đến tích Đề-các sinh ra dữ liệu sai lệch. Tuy nhiên, theo cơ sở dữ liệu đáp án gốc, A lại được chỉ định làm phương án đúng. Người học cần nắm lý thuyết chuẩn nhưng phải cẩn trọng với các dị bản của đề thi nội bộ."
+    "correct": "D",
+    "explanation": "Truy vấn cần kết nối đúng 3 bảng Sinhvien - DangKy - Monhoc bằng các khóa chung: s.MaSV = d.MaSV VÀ m.MaMH = d.MaMH, sau đó lọc theo TenMH và sắp xếp theo Hocky. Đáp án D cung cấp đầy đủ cả hai điều kiện kết nối này. Đáp án A thiếu điều kiện s.MaSV = d.MaSV nên gây ra tích Đề-các giữa Sinhvien và DangKy, cho ra kết quả sai (trùng lặp/không chính xác). Đáp án B và C thiếu kết nối với bảng Monhoc (không lọc đúng theo TenMH). Vậy đáp án đúng và đầy đủ nhất là D."
   },
   {
     "Ques": "Cho CSDL gồm các quan hệ sau: NhanVien( MaNV , HoTen, NamSinh) DuAn( MaDA , TenDA, KinhPhi) ThamGia( MaNV, MaDA , MucLuong) ... Phương án nào dưới đây đảm bảo luôn xóa được nhân viên có tên là 'Nguyễn Văn A' ?",
     "Ans": {
       "A": "DELETE * FROM NhanVien WHERE HoTen = 'Nguyễn Văn A';",
       "B": "DELETE * FROM ThamGia WHERE MaNV in (SELECT MaNV FROM NhanVien WHERE Hoten = 'Nguyễn Văn A');",
-      "C": "DELETE FROM NhanVien WHERE HoTen = 'Nguyễn Văn A'; DELETE FROM ThamGia WHERE MaNV in (SELECT MaNV FROM NhanVien WHERE HoTen = 'Nguyễn Văn A');",
-      "D": ""
+      "C": "DELETE FROM NhanVien WHERE HoTen = 'Nguyễn Văn A'; DELETE FROM ThamGia WHERE MaNV in (SELECT MaNV FROM NhanVien WHERE HoTen = 'Nguyễn Văn A');"
     },
-    "correct": [
-      "A",
-      "D"
-    ],
-    "explanation": "Trong ràng buộc toàn vẹn khóa ngoại, nếu NhanVien chứa khóa chính và ThamGia tham chiếu đến nó, xóa trực tiếp (A) sẽ thất bại nếu nhân viên đang có bản ghi trong ThamGia (trừ khi dùng ON DELETE CASCADE). Dù cú pháp A chứa dư thừa dấu `*` (`DELETE FROM` mới chuẩn SQL), và lựa chọn D để trống, hệ thống gốc lại chọn A và D là phương án chính xác. Logic chuẩn nhất phải là C (xóa khóa ngoại trước). Giải thích này tuân theo khung chấm cứng của đề."
+    "correct": "C",
+    "explanation": "Vì ThamGia tham chiếu khóa ngoại đến NhanVien, nếu xóa trực tiếp bản ghi NhanVien đang có liên kết trong ThamGia (mà không có ON DELETE CASCADE), thao tác sẽ bị từ chối do vi phạm ràng buộc toàn vẹn tham chiếu. Để đảm bảo luôn xóa được, cần xóa các bản ghi con ở ThamGia trước, sau đó mới xóa bản ghi cha ở NhanVien: DELETE FROM ThamGia WHERE MaNV IN (SELECT MaNV FROM NhanVien WHERE HoTen = 'Nguyễn Văn A'); rồi DELETE FROM NhanVien WHERE HoTen = 'Nguyễn Văn A'; Đây chính là phương án C. Đáp án A chỉ xóa ở bảng NhanVien nên có thể thất bại do ràng buộc khóa ngoại. Đáp án B chỉ xóa ở ThamGia, không xóa bản ghi NhanVien theo yêu cầu đề bài."
   },
   {
     "Ques": "Có tổng cộng bao nhiêu chiến lược tối ưu tổng quát?",
@@ -479,10 +469,11 @@
       "A": "4",
       "B": "5",
       "C": "6",
-      "D": "7 (hoặc 8)"
+      "D": "7",
+      "E": "8"
     },
     "correct": "D",
-    "explanation": "Trong lĩnh vực Tối ưu hóa truy vấn CSDL (Query Optimization), các giáo trình chuẩn (như Elmasri & Navathe) liệt kê các quy tắc heuristic tổng quát (như đẩy phép chọn, đẩy phép chiếu, tính toán giá trị hằng, gộp toán tử...). Số lượng quy tắc thường dao động từ 7 đến 8 quy tắc căn bản tùy thuộc vào cách phân chia lý thuyết. Do đó, đáp án D (7 hoặc 8) là con số phản ánh đúng phạm vi kiến thức về số lượng các chiến lược tối ưu hóa đại số quan hệ."
+    "explanation": "Theo giáo trình Cơ sở dữ liệu (Elmasri & Navathe) được sử dụng trong học phần IT3090, các quy tắc biến đổi đại số quan hệ heuristic tổng quát dùng để tối ưu hóa cây truy vấn (đẩy phép chọn/chiếu xuống sớm, kết hợp tích Đề-các với phép chọn thành phép kết nối, sắp xếp lại thứ tự kết nối, tính trước các biểu thức con chung...) được liệt kê thành 7 chiến lược tổng quát. Đáp án đúng là D (7)."
   },
   {
     "Ques": "Cho quan hệ R(A, B, C, D, E) với tập phụ thuộc hàm F = {AB->E, B->C, ABC->D,A->C}Cho biết dạng chuẩn cao nhất của lược đồ, giả sử các thuộc đều chỉ nhận giá trị nguyên tố?",
@@ -503,11 +494,8 @@
       "C": "alter table Acc add constraint fk_acc foreign key (AccID_parent) references Acc(AccID);",
       "D": "alter table Acc add constraint fk_acc foreign key (AccID) references Acc(AccID_parent);"
     },
-    "correct": [
-      "A",
-      "C"
-    ],
-    "explanation": "Cú pháp tạo khóa ngoại (Foreign Key) là `ALTER TABLE [bảng_con] ADD CONSTRAINT [tên] FOREIGN KEY (cột_hiện_tại) REFERENCES [bảng_cha](cột_đích)`. Đáp án C thể hiện mối quan hệ đệ quy chuẩn mực: bảng Acc tự tham chiếu chính nó (AccID_parent tham chiếu tới khóa chính AccID). Trong khi đó, đáp án A thiết lập khóa ngoại trên bảng Object tham chiếu về bảng Acc. Do hệ thống cung cấp ghi nhận cả A và C, điều này ngụ ý các đáp án đều có cấu trúc SQL thiết lập Constraint hợp lệ dù mục tiêu thiết kế bảng chịu tác động khác nhau."
+    "correct": "C",
+    "explanation": "Đề bài yêu cầu ràng buộc khóa ngoại CHO BẢNG ACC (tự tham chiếu: AccID_parent trỏ về AccID của chính bảng Acc). Cú pháp đúng phải là ALTER TABLE Acc ADD CONSTRAINT ... FOREIGN KEY (AccID_parent) REFERENCES Acc(AccID), đúng như đáp án C. Đáp án A và B đều thao tác trên bảng Object (sai đối tượng bảng theo yêu cầu đề bài). Đáp án D đảo ngược chiều tham chiếu (dùng chính khóa chính AccID làm khóa ngoại trỏ tới AccID_parent), sai logic thiết kế. Vậy đáp án đúng là C."
   },
   {
     "Ques": "Cho schema của một DB như sau: SINHVIEN... Cho câu lệnh sau: SELECT SV.MASV FROM SINHVIEN SV JOIN DANGKY DK ON SV.MASV = DK.MASV WHERE YEAR(NGAYSINH) = '2006'; Kết quả của câu lệnh trên là gì?",
@@ -517,8 +505,8 @@
       "C": "Lỗi cú pháp",
       "D": "Tất cả sinh viên có năm sinh 2006"
     },
-    "correct": "B",
-    "explanation": "Lệnh thực hiện INNER JOIN giữa SINHVIEN và DANGKY, lấy ra những sinh viên có năm sinh 2006 và CÓ tồn tại bản ghi ở bảng đăng ký. Logic hiển nhiên của câu lệnh là tìm sinh viên 'đã đăng ký ít nhất một lớp' (đáp án A). Tuy nhiên, đáp án gốc được chốt trong bộ đề lại là B ('chưa đăng ký'). Đây là một lỗi lớn trong khâu đáp án đề thi. Dưới góc độ học thuật, đáp án B áp dụng cho truy vấn phủ định (NOT EXISTS hoặc LEFT JOIN ... IS NULL), nhưng cần tuân theo đáp án B khi thao tác."
+    "correct": "A",
+    "explanation": "Câu lệnh thực hiện INNER JOIN giữa SINHVIEN và DANGKY theo MASV, kèm điều kiện năm sinh = 2006. INNER JOIN chỉ giữ lại các dòng có tồn tại bản ghi khớp ở cả hai bảng, nên kết quả là những sinh viên có năm sinh 2006 VÀ có ít nhất một bản ghi đăng ký học phần (đáp án A). Đáp án B mô tả điều ngược lại (sẽ cần LEFT JOIN kèm điều kiện IS NULL hoặc NOT EXISTS). Câu lệnh đúng cú pháp nên C sai, và D sai vì không phải mọi sinh viên năm sinh 2006 đều xuất hiện (chỉ những ai đã đăng ký học phần)."
   },
   {
     "Ques": "Thứ tự đúng khi viết câu lệnh truy vấn trong ngôn ngữ SQL là gì",
@@ -539,11 +527,8 @@
       "C": "{A,C,E,G}",
       "D": "{A,B,C,D}"
     },
-    "correct": [
-      "A",
-      "B"
-    ],
-    "explanation": "Phép tích Đề-các S * T tạo ra sơ đồ bao gồm hợp các thuộc tính: {B,D,E,G,A,C,H,K}. Phép chia (÷) cho quan hệ R{A,B,C,D} đòi hỏi mẫu số R phải là tập con của tử số (đã thỏa mãn). Kết quả của phép chia là loại bỏ các thuộc tính của R ra khỏi sơ đồ của tử số. Phép trừ tập hợp: {B,D,E,G,A,C,H,K} - {A,B,C,D} = {E,G,H,K}. Đáp án chuẩn xác tuyệt đối là A. Tuy nhiên, hệ thống đáp án gắn kèm luôn cả B. Giải pháp duy nhất là ghi nhận cả A và B theo định mức."
+    "correct": "A",
+    "explanation": "Phép tích Đề-các S*T tạo sơ đồ hợp các thuộc tính: {B,D,E,G} ∪ {A,C,H,K} = {A,B,C,D,E,G,H,K}. Phép chia (÷) cho quan hệ R{A,B,C,D} yêu cầu loại bỏ các thuộc tính của R khỏi sơ đồ kết quả: {A,B,C,D,E,G,H,K} - {A,B,C,D} = {E,G,H,K}. Vậy sơ đồ quan hệ kết quả của (S*T)÷R là {E,G,H,K}, khớp với đáp án A."
   },
   {
     "Ques": "Một hệ cơ sở dữ liệu KHÔNG gồm thành phần nào sau đây?",
@@ -564,8 +549,8 @@
       "C": "SELECT * FROM items WHERE name LIKE '%choco%'",
       "D": "SELECT * FROM items WHERE name LIKE 'choco%'"
     },
-    "correct": "A",
-    "explanation": "Ký tự đại diện trong toán tử LIKE: `%` đại diện cho chuỗi tùy ý (bao gồm rỗng), `_` đại diện cho đúng một ký tự đơn. Yêu cầu 'bắt đầu bởi choco' thì đúng chuẩn SQL phải là `LIKE 'choco%'` (đáp án D). Tuy nhiên, đáp án A (`LIKE 'choco_'`) lại được đánh dấu là đúng trong barem. Cú pháp A chỉ lấy các tên dài ĐÚNG 6 ký tự bắt đầu là 'choco' (vd: chocos, chocot), thu hẹp phạm vi so với 'bắt đầu bằng'. Đây lại là một điểm lệch chuẩn của đề so với kiến thức SQL phổ quát."
+    "correct": "D",
+    "explanation": "Trong SQL, ký tự đại diện `%` của LIKE đại diện cho một chuỗi ký tự bất kỳ (kể cả rỗng), còn `_` chỉ đại diện cho ĐÚNG một ký tự. Yêu cầu 'tên bắt đầu bởi chuỗi choco' (độ dài bất kỳ sau đó) phải dùng `LIKE 'choco%'`, tức đáp án D. Đáp án A (`LIKE 'choco_'`) chỉ khớp các tên có đúng 6 ký tự bắt đầu bằng 'choco' (ví dụ 'chocos'), không thỏa yêu cầu tổng quát. Đáp án B sai cú pháp (WHRE) và dùng dấu = thay vì LIKE. Đáp án C (`%choco%`) tìm chuỗi chứa 'choco' ở bất kỳ vị trí nào, không phải chỉ ở đầu. Vậy đáp án đúng là D."
   },
   {
     "Ques": "Phát biểu nào dưới đây là ĐÚNG về khóa ngoài ?",
@@ -575,11 +560,8 @@
       "C": "Khóa ngoài luôn tham gia vào khóa chính",
       "D": "Một bảng luôn có ít nhất 1 khóa ngoài"
     },
-    "correct": [
-      "B",
-      "C"
-    ],
-    "explanation": "Khóa ngoại (Foreign Key - FK) thiết lập liên kết dữ liệu. Đáp án B chuẩn xác: FK hoàn toàn có thể tham chiếu về Khóa chính của bảng hiện tại (quan hệ đệ quy, ví dụ Quản lý - Nhân viên chung bảng). Đáp án C bị đánh dấu đúng nhưng sai lý thuyết: FK CÓ THỂ, nhưng KHÔNG LUÔN LUÔN tham gia vào khóa chính (chỉ ở thực thể yếu/bảng trung gian thì mới tham gia vào khóa chính). Dù C sai thuật ngữ 'luôn', barem ghi nhận B và C đồng thời là đáp án đúng."
+    "correct": "B",
+    "explanation": "Khóa ngoại (Foreign Key) hoàn toàn có thể tham chiếu đến khóa chính của chính bảng chứa nó, tạo thành quan hệ đệ quy (ví dụ: bảng NhanVien có cột QuanLy tham chiếu đến MaNV của chính bảng đó) - đáp án B đúng. Đáp án A sai vì một bảng có thể có nhiều khóa ngoại. Đáp án C sai vì khóa ngoại KHÔNG LUÔN LUÔN tham gia vào khóa chính (chỉ ở một số trường hợp đặc biệt như bảng trung gian n-n mới như vậy). Đáp án D sai vì một bảng hoàn toàn có thể không có khóa ngoại nào. Vậy đáp án đúng là B."
   },
   {
     "Ques": "Cho sơ đồ quan hệ R(U) với: U = {A, B, C, D, E} F = {A -> BC, B -> C, CD -> E} Bao đóng của BDE với sơ đồ này là?",
@@ -589,11 +571,8 @@
       "C": "BCDE",
       "D": "BDE"
     },
-    "correct": [
-      "A",
-      "C"
-    ],
-    "explanation": "Tính bao đóng của tập {B, D, E}, ký hiệu (BDE)+. Bước 1: Khởi tạo (BDE)+ = {B, D, E}. Bước 2: Duyệt tập F. Nhờ phụ thuộc hàm B -> C, ta thêm C. Lúc này (BDE)+ = {B, C, D, E}. Tiếp tục duyệt: CD -> E, nhưng E đã có sẵn. Không có vế trái nào của các phụ thuộc hàm còn lại (A) nằm trong bao đóng để sinh thêm thuộc tính. Thuật toán kết thúc với (BDE)+ = BCDE. Đáp án đúng chuẩn xác là C. Tuy nhiên, hệ thống lại ghi nhận cả A, đây là điểm cần lưu ý do sai sót kỹ thuật."
+    "correct": "C",
+    "explanation": "Tính bao đóng (BDE)+ với F={A->BC, B->C, CD->E}: Khởi tạo {B,D,E}. Nhờ B->C, thêm C: {B,C,D,E}. Không còn phụ thuộc hàm nào khác (như A->BC, CD->E) có vế trái nằm trọn trong tập hiện có để sinh thêm thuộc tính mới (A không có trong tập). Vậy (BDE)+ = BCDE, khớp với đáp án C."
   },
   {
     "Ques": "Cho sơ đồ quan hệ R có lực lượng m, sơ đồ quan hệ S có lực lượng n. Hãy cho biết lực lượng của biểu thức đại số quan hệ: R x S",
@@ -601,10 +580,11 @@
       "A": "min(m, n)",
       "B": "Chưa đủ thông tin",
       "C": "m + n",
-      "D": "m*n (hoặc max(m, n))"
+      "D": "max(m, n)",
+      "E": "m*n"
     },
-    "correct": "D",
-    "explanation": "Lực lượng (Cardinality) của một quan hệ là tổng số bản ghi (số hàng) tồn tại trong quan hệ đó. Khi thực hiện phép tích Đề-các (Cartesian Product), ký hiệu `R x S`, mỗi bản ghi của bảng R sẽ được ghép lần lượt với toàn bộ các bản ghi của bảng S. Theo nguyên lý tổ hợp, số lượng bản ghi của kết quả trả về sẽ bằng phép nhân của lực lượng hai bảng: m * n. Đáp án D cung cấp công thức này và là biểu diễn định lý toán học hoàn toàn chính xác."
+    "correct": "E",
+    "explanation": "Lực lượng (số bộ/số dòng) của một quan hệ là số bản ghi trong quan hệ đó. Phép tích Đề-các R x S ghép MỖI bản ghi của R với MỌI bản ghi của S, nên số bản ghi kết quả bằng tích số bản ghi của hai quan hệ: m * n. Đáp án đúng là E (m*n)."
   },
   {
     "Ques": "Phát biểu nào sau đây về PRIMARY KEY là đúng?",
@@ -707,7 +687,7 @@
       "A": "AB -> EHIC",
       "B": "ABG -> EHI",
       "C": "B -> GE",
-      "D": "AB -> EI (hoặc Tùy chọn 2)"
+      "D": "AB -> EI"
     },
     "correct": "D",
     "explanation": "Kiểm tra bao đóng để suy diễn phụ thuộc hàm. Ta muốn suy diễn AB -> ? (tìm (AB)+). Bước 1: {A, B}. Bước 2: B -> G nên có {A, B, G}. Bước 3: AB -> E nên có {A, B, G, E}. Bước 4: GA -> HB, vì có G và A, nên suy ra H và B, bổ sung H, tập có {A, B, G, E, H}. Bước 5: BH -> I, vì có B và H, bổ sung I, tập thành {A, B, G, E, H, I}. Vì tập này chứa E và I, nên AB -> EI là hợp lệ. Đáp án D hoàn toàn chính xác dựa trên hệ luật dẫn xuất Armstrong."
@@ -742,8 +722,8 @@
       "C": "ABCDEH",
       "D": "BDEGH"
     },
-    "correct": "C",
-    "explanation": "Tính bao đóng của tập {B, E}, ký hiệu (BE)+. Ban đầu tập có {B, E}. Do BE->C, tập có thêm C: {B, C, E}. Do C->A, tập thêm A: {A, B, C, E}. Kế tiếp, do BC->D, bổ sung D: {A, B, C, D, E}. Sau đó, do D->EG, bổ sung G (E đã có): {A, B, C, D, E, G}. Cuối cùng, do G->H, bổ sung H: {A, B, C, D, E, G, H}. Tập thu được là toàn bộ U (ABCDEGH). Toán học chứng minh A đúng. Tuy nhiên hệ thống chọn C (chỉ có ABCDEH). Sinh viên cần lưu ý về sự sai lệch đáp án này."
+    "correct": "A",
+    "explanation": "Tính (BE)+ với F = {AB->C; D->EG; C->A; BE->C; ACD->B; CE->AG; BC->D; CG->BD; G->H} trên U={A,B,C,D,E,G,H}: Khởi tạo {B,E}. Do BE->C, thêm C: {B,C,E}. Do C->A, thêm A: {A,B,C,E}. Do BC->D, thêm D: {A,B,C,D,E}. Do D->EG, thêm G (E đã có): {A,B,C,D,E,G}. Do G->H, thêm H: {A,B,C,D,E,G,H}. Kết quả (BE)+ = ABCDEGH, chính là toàn bộ tập thuộc tính U. Vậy đáp án đúng là A."
   },
   {
     "Ques": "Cho lược đồ quan hệ R(ABCDE) và tập phụ thuộc hàm F = {A->BC; BD->E; B->C}. Phép tách lược đồ R thành các lược đồ con R1(ABD), R2(BC), R3(ADE) sẽ:",
@@ -753,8 +733,8 @@
       "C": "Bảo toàn thông tin, bảo toàn tập phụ thuộc hàm",
       "D": "Không bảo toàn thông tin, bảo toàn tập phụ thuộc hàm"
     },
-    "correct": "C",
-    "explanation": "Khảo sát phép tách bảo toàn thông tin: (1) R1 ∩ R2 = B, B->C thuộc F, (R1 ∩ R2)->R2, bảo toàn R1, R2. Giao lại: {A,B,C,D} ∩ R3 = AD. Do A->BC và BD->E nên A->BC, ABD->BCDE, AD->E không trực tiếp, nhưng với thuật toán bảng phân tích (Chase algorithm), các hàng sẽ quy về biến 'a', bảo đảm không mất thông tin. Về phụ thuộc hàm: Tập F được duy trì ở R1(chứa BD->E), R2(chứa B->C). Dù A->BC được cắt ra, sự dẫn xuất không làm đứt gãy tính bảo toàn F. Phép tách đạt cả 2 tính chất (C đúng)."
+    "correct": "A",
+    "explanation": "Kiểm tra bảo toàn thông tin: R1(ABD) ∩ R2(BC) = B; vì B->C thuộc F nên (R1∩R2)->R2, đủ điều kiện lossless giữa R1,R2. Hợp R1∪R2 = ABCD; giao với R3(ADE) là AD; vì A->BC và BD->E nên AD suy ra được B (từ A->BC), rồi kết hợp BD->E suy ra E, tức AD->E, thỏa điều kiện lossless. Vậy phép tách BẢO TOÀN THÔNG TIN. Kiểm tra bảo toàn phụ thuộc hàm: chiếu F lên từng lược đồ con ta chỉ thu được {A->B (từ R1), B->C (từ R2), AD->E (từ R3)}. Từ tập chiếu này, không thể suy ra lại phụ thuộc hàm gốc BD->E (vì bao đóng của {B,D} chỉ cho {B,C,D}, không có E, do thiếu A). Vậy phép tách KHÔNG BẢO TOÀN tập phụ thuộc hàm. Kết luận: Bảo toàn thông tin, không bảo toàn tập phụ thuộc hàm - đáp án A."
   },
   {
     "Ques": "Xét các mức cô lập giao dịch (Isolation Levels). Phát biểu nào sau đây là đúng?",
@@ -797,8 +777,12 @@
       "C": "BGC->I",
       "D": "C->I"
     },
-    "correct": "D",
-    "explanation": "Để biết phụ thuộc hàm nào không suy diễn được, ta tính bao đóng của vế trái. Xét đáp án D: C->I. Bao đóng của C là C+ = {C}. Vì không có phụ thuộc hàm nào trong F khớp với vế trái là C, bao đóng không mở rộng được. C+ không chứa I, nên C->I là sai (không suy diễn được). Đối với A (B->E) và B (B->I), do B+ = {B}, chúng cũng không suy diễn được. Mặc dù câu hỏi có nhiều phương án sai lý thuyết toán học (A, B, D đều không suy diễn được), nhưng D được chốt làm đáp án."
+    "correct": [
+      "A",
+      "B",
+      "D"
+    ],
+    "explanation": "Với F = {BG->E; I->H; BC->IH; A->CD}, ta kiểm tra từng đáp án bằng cách tính bao đóng vế trái. B+ = {B} (không có FD nào có vế trái là B đơn lẻ được thỏa mãn chỉ với B), nên cả B->E (đáp án A) và B->I (đáp án B) đều KHÔNG suy diễn được từ F. C+ = {C}, nên C->I (đáp án D) cũng KHÔNG suy diễn được. Ngược lại, xét (BGC)+: {B,C,G} -> (do BG->E) thêm E: {B,C,E,G} -> (do BC->IH) thêm I,H: {B,C,E,G,H,I}, chứa I, nên BGC->I (đáp án C) HOÀN TOÀN suy diễn được. Vậy các phụ thuộc hàm KHÔNG suy diễn được từ F là A, B và D."
   },
   {
     "Ques": "Tính phủ tối thiểu của tập phụ thuộc hàm F = {A->BC; A->B; B->C; AB->C}",
@@ -852,8 +836,8 @@
       "C": "Không bảo toàn thông tin, không bảo toàn tập phụ thuộc hàm",
       "D": "Bảo toàn thông tin, bào toàn tập phụ thuộc hàm"
     },
-    "correct": "D",
-    "explanation": "Sử dụng bảng Chase kiểm tra bảo toàn thông tin: hàng R1(ABC), R2(CBE), R3(DE). Giao R1 và R2 là BC, vì CB->E nên R1 được phủ thêm E. Giao R12 và R3 là E, vì E->DC nên R3 có C, D. Lặp lại quá trình, ma trận đạt được một hàng chứa đủ 'a' -> Phép tách BẢO TOÀN thông tin. Về phụ thuộc hàm: R1 chứa C->B. R2 chứa CB->E. R3 chứa một phần E->D. Mặc dù AB->D tách rời, việc kết nối thông qua C và E khôi phục được nó. Nhờ vậy, tập F được BẢO TOÀN, minh chứng cho đáp án D."
+    "correct": "B",
+    "explanation": "Kiểm tra bảo toàn thông tin: R1(ABC) ∩ R2(CBE) = BC; vì CB->E thuộc F nên (R1∩R2)->R2, thỏa điều kiện. Hợp R1∪R2=ABCE, giao với R3(DE) là E; vì E->DC nên E->D, thỏa điều kiện tiếp theo. Vậy phép tách BẢO TOÀN THÔNG TIN. Kiểm tra bảo toàn phụ thuộc hàm: Chiếu F lên các lược đồ con, ta thu được G = {C->B, C->E, E->D} (vì trong R2, C+ đã bao trùm cả B lẫn E). Từ G, bao đóng (E)+ = {D,E} (không suy ra được C), nên phụ thuộc hàm gốc E->DC (cụ thể phần E->C) KHÔNG được suy ra từ G. Tương tự (AB)+ dùng G chỉ cho {A,B}, không suy ra được D, nên AB->D cũng KHÔNG được bảo toàn. Vậy phép tách KHÔNG BẢO TOÀN tập phụ thuộc hàm. Kết luận: Bảo toàn thông tin, không bảo toàn tập phụ thuộc hàm - đáp án B."
   },
   {
     "Ques": "Chuyển đổi phát biểu sau sang logic vị từ: \"All boys are cool\".",
@@ -998,8 +982,8 @@
       "C": "Đáp án khác",
       "D": "Nhỏ hơn hoặc bằng min(m, n)"
     },
-    "correct": "D",
-    "explanation": "Lỗi lý thuyết hệ thống: Câu trả lời gốc D 'Nhỏ hơn hoặc bằng min(m,n)' là sai về mặt toán học CSDL. Phép nối tự nhiên dựa trên điều kiện bằng của các thuộc tính chung. Nếu các thuộc tính chung không phải là Khóa chính, một bản ghi của R có thể nối với nhiều bản ghi của S. Số bản ghi tối đa có thể lên tới `m * n` (nếu mọi bản ghi đều khớp, tương đương Cartesian Product). Dù vậy, theo đề thi đưa ra, sinh viên phải nắm bắt và tuân theo chỉ định đáp án D nội bộ này."
+    "correct": "C",
+    "explanation": "Phép nối tự nhiên (Natural Join) R*S dựa trên điều kiện bằng của các thuộc tính chung. Nếu thuộc tính chung không phải là khóa, một bản ghi của R có thể khớp với nhiều bản ghi của S (và ngược lại), nên số bản ghi kết quả có thể lớn hơn min(m,n), thậm chí lên tới m*n trong trường hợp cực đoan. Vì không có công thức cố định nào trong A, B, D luôn đúng với mọi trường hợp dữ liệu, đáp án chính xác nhất là C (Đáp án khác) - số lượng bản ghi phụ thuộc vào dữ liệu cụ thể, dao động từ 0 đến m*n."
   },
   {
     "Ques": "Cho schema của một DB như sau: SINHVIEN... LOPHOCPHAN... Cho câu lệnh sau: SELECT MAHP, COUNT(*) FROM LOPHOCPHAN; Kết quả?",
@@ -1009,8 +993,8 @@
       "C": "Lỗi cú pháp",
       "D": "Đếm số học phần"
     },
-    "correct": "A",
-    "explanation": "Đây là một lỗi SQL cổ điển (cú pháp sai). Bảng LOPHOCPHAN có khóa MALHP, và chứa nhiều lớp cho một MAHP. Lệnh thực hiện đếm `COUNT(*)` (hàm tập hợp) nhưng lại chiếu thêm trường dữ liệu rời rạc là `MAHP` mà KHÔNG CÓ mệnh đề `GROUP BY MAHP`. Hầu hết hệ quản trị như SQL Server/Oracle sẽ báo lỗi cú pháp lập tức (đáp án C). Chỉ riêng MySQL ở chế độ cũ mới trả ra 'Tổng số lớp học phần' và ghép bừa mã môn đầu tiên (Đáp án A được chọn theo hệ cũ này)."
+    "correct": "C",
+    "explanation": "Câu lệnh SELECT MAHP, COUNT(*) FROM LOPHOCPHAN; trộn lẫn một cột không gom nhóm (MAHP) với một hàm tập hợp (COUNT(*)) mà KHÔNG có mệnh đề GROUP BY. Theo chuẩn SQL (và hầu hết hệ quản trị như SQL Server, PostgreSQL, Oracle, kể cả MySQL ở chế độ mặc định ONLY_FULL_GROUP_BY từ bản 5.7 trở đi), đây là lỗi cú pháp/ngữ nghĩa vì không xác định được MAHP nào tương ứng với giá trị COUNT(*) tổng. Đáp án đúng là C (Lỗi cú pháp)."
   },
   {
     "Ques": "Cho lược đồ quan hệ R(ABCDEFG), tập phụ thuộc hàm F = {B->A; D->C; D->EB; DF->G} Tách về dạng chuẩn 3, bảo toàn tập phụ thuộc hàm là:",
@@ -1073,10 +1057,11 @@
       "A": "3",
       "B": "0",
       "C": "1",
-      "D": "4 (hoặc 2)"
+      "D": "4",
+      "E": "2"
     },
-    "correct": "A",
-    "explanation": "Tìm phủ tối thiểu Fm. Tách vế phải: A->E, BC->A, BC->D, C->B, E->D. Xét BC->A: Lược bỏ vế trái dư thừa. Ta bỏ B, còn C->A. C+ (không có BC->A) = {C, B}. Không chứa A, nhưng ta có C->B. C+ gốc = {C, B, A, D}. Thay BC bằng C không làm mất nghĩa. Phụ thuộc thành C->A. Xét BC->D: Tương tự, bỏ B thành C->D. Vậy Fm = {A->E, C->A, C->D, C->B, E->D}. Lược bỏ các PTH phụ thuộc: C->D dư thừa vì C->A->E->D. Cuối cùng, Fm có {C->A, C->B...}. C xuất hiện trái 3 lần theo thuật toán của hệ thống chấm (Đáp án A)."
+    "correct": "E",
+    "explanation": "Tìm phủ tối thiểu Fm của F={A->E; BC->AD; C->B; E->D}. Tách vế phải: A->E, BC->A, BC->D, C->B, E->D. Xét BC->D: vì C->B->... thực chất tính C+ (dùng các FD còn lại) = {C,B,A,E,D} bao trùm D, nên BC->D dư thừa, loại bỏ. Còn lại: {A->E, BC->A, C->B, E->D}. Xét BC->A: không thể bỏ B hay C riêng lẻ (B+ ={B}, C+={B,C} đều không cho A). Giữ nguyên BC->A. Vậy phủ tối thiểu Fm = {A->E, BC->A, C->B, E->D}. Đếm số lần C xuất hiện ở vế trái: trong 'BC' (1 lần) và trong 'C' độc lập (1 lần) = tổng cộng 2 lần. Đáp án đúng là 2 (E)."
   },
   {
     "Ques": "Câu lệnh nào sau đây bị sai?",
@@ -1208,10 +1193,14 @@
       "A": "FOREIGN KEY bắt buộc phải có cùng tên với PRIMARY KEY được tham chiếu.",
       "B": "FOREIGN KEY có thể tham chiếu chính nó (self-reference).",
       "C": "FOREIGN KEY không thể chứa giá trị NULL",
-      "D": "FOREIGN KEY có thể tham chiếu đến PRIMARY KEY hoặc UNIQUE KEY. (hoặc Một bảng chỉ có thể có một FOREIGN KEY.)"
+      "D": "FOREIGN KEY có thể tham chiếu đến PRIMARY KEY hoặc UNIQUE KEY.",
+      "E": "Một bảng chỉ có thể có một FOREIGN KEY."
     },
-    "correct": "D",
-    "explanation": "Khóa ngoại (FOREIGN KEY) được thiết kế nhằm duy trì Tính toàn vẹn tham chiếu. Cơ chế cốt lõi của nó là yêu cầu giá trị lưu tại FK phải tìm thấy sự tồn tại ở một cột khác có tính định danh duy nhất trong bảng gốc. Do đó, FK không chỉ trỏ được về Khóa chính (Primary Key) mà hoàn toàn có quyền trỏ về các cột đã thiết lập Khóa duy nhất (Unique Constraint) để đảm bảo ràng buộc tham chiếu. (Đáp án D đúng). A sai vì tên cột tùy ý. C sai do FK hoàn toàn có thể lưu NULL (biểu thị không thuộc liên kết nào)."
+    "correct": [
+      "B",
+      "D"
+    ],
+    "explanation": "FOREIGN KEY (khóa ngoại) có thể tham chiếu chính nó để tạo quan hệ đệ quy, ví dụ bảng Acc với cột AccID_parent tự tham chiếu AccID của chính nó (đáp án B đúng). FOREIGN KEY cũng có thể tham chiếu đến PRIMARY KEY hoặc đến một cột có ràng buộc UNIQUE ở bảng khác, không bắt buộc chỉ trỏ về khóa chính (đáp án D đúng). Đáp án A sai vì tên cột khóa ngoại không bắt buộc trùng tên với khóa chính tham chiếu. Đáp án C sai vì FOREIGN KEY hoàn toàn có thể nhận giá trị NULL (biểu thị chưa có liên kết). Đáp án E sai vì một bảng có thể có nhiều khóa ngoại. Vậy đáp án đúng là B và D."
   },
   {
     "Ques": "Cho sơ đồ quan hệ s(U) với: U = {A, B, C, D, E, F} F = {A->B, C->D, CD->EF} Phủ tối thiểu của F là:",
@@ -1221,8 +1210,8 @@
       "C": "FC = {A->B, C->D, C->E, C->F}",
       "D": "FC = {A->B, C->E, C->F}"
     },
-    "correct": "A",
-    "explanation": "Tìm phủ tối thiểu Fm. Bước 1: Phá vỡ vế phải. F1 = {A->B, C->D, CD->E, CD->F}. Bước 2: Tối giản vế trái (loại bỏ thuộc tính dư). Xét CD->E. Vì có C->D, nên khi bỏ D khỏi CD, ta tính bao đóng của C: C+ = {C, D, E, F}. Vậy C->E giữ được giá trị, ta có thể rút gọn CD->E thành C->E. Tương tự CD->F rút gọn thành C->F. Dẫn tới phủ tối thiểu toán học thật là {A->B, C->D, C->E, C->F}. Tuy nhiên, đáp án A của đề gốc (chỉ mới thực hiện xong Bước 1) lại được chốt là đúng. Cần chấp nhận kết quả sai lệch lý thuyết này khi thi."
+    "correct": "C",
+    "explanation": "Tìm phủ tối thiểu của F={A->B, C->D, CD->EF}. Bước 1 (tách vế phải): {A->B, C->D, CD->E, CD->F}. Bước 2 (loại thuộc tính dư ở vế trái): xét CD->E, vì đã có C->D nên tính C+ (không dùng CD->E) = {C,D,E,F} (do C->D rồi CD->EF áp dụng được vì đã có D) - vậy chỉ cần C->E, bỏ D dư thừa trong CD->E; tương tự CD->F rút gọn thành C->F. Phủ tối thiểu là {A->B, C->D, C->E, C->F}, khớp với đáp án C."
   },
   {
     "Ques": "Cho U = {A, B, C, D, E, G, H}, và tập phụ thuộc hàm F = {A->D, AB->DE, CE->G, E->H} Hãy cho biết, phụ thuộc hàm nào không được dẫn xuất từ F?",
@@ -1252,10 +1241,11 @@
       "A": "Tôi bị ngu",
       "B": "Tất cả các phương án chọn khác của câu hỏi này",
       "C": "Các bảng được cập nhật và thêm dữ liệu thường xuyên",
-      "D": "Các bảng có kích thước nhỏ (hoặc Các cột được cập nhật dữ liệu thường xuyên, các cột có kiểu giá trị là NULL)"
+      "D": "Các bảng có kích thước nhỏ",
+      "E": "Các cột được cập nhật dữ liệu thường xuyên, các cột có kiểu giá trị là NULL"
     },
     "correct": "B",
-    "explanation": "Chỉ mục (Index) tăng tốc truy vấn nhưng có nhược điểm lớn: cấu trúc cây B-Tree vật lý phải tự động cân bằng, sắp xếp lại liên tục mỗi khi bảng bị INSERT, UPDATE, hoặc DELETE. Do đó, với các bảng chịu khối lượng cập nhật lớn/thường xuyên (C), chỉ mục làm hiệu năng suy giảm nghiêm trọng do overhead ghi đĩa. Đồng thời, bảng kích thước siêu nhỏ (D) thì quét toàn bảng (Full Table Scan) vẫn nhanh hơn đọc qua cây Index. Cả C và D đều là trường hợp cấm kỵ áp dụng index, khiến B là kết luận tổng hợp đúng."
+    "explanation": "Không nên đánh chỉ mục (index) trong các trường hợp: bảng bị cập nhật/thêm dữ liệu thường xuyên (chi phí duy trì chỉ mục cao - đáp án C), bảng có kích thước nhỏ (quét toàn bảng vẫn nhanh hơn dùng chỉ mục - đáp án D), hoặc trên các cột thường xuyên thay đổi giá trị/nhiều giá trị NULL (đáp án E). Vì cả C, D, E đều là các trường hợp hợp lệ không nên đánh chỉ mục, đáp án tổng quát và đầy đủ nhất là B (Tất cả các phương án chọn khác)."
   },
   {
     "Ques": "Đảm bảo tính không thể chia cắt là tính chất nào của 1 giao dịch ?",
@@ -1276,8 +1266,8 @@
       "C": "Không bảo toàn tập tin, bảo toàn tập phụ thuộc hàm",
       "D": "Bảo toàn thông tin, bảo toàn tập phụ thuộc hàm"
     },
-    "correct": "D",
-    "explanation": "Kiểm tra bảo toàn thông tin (Join Lossless): R1 ∩ R2 = C. Do C->E có mặt trong F, tính chất (R1∩R2)->R2 được thỏa mãn. Ta có lược đồ gộp (ABCE). Giao của (ABCE) ∩ R3(DE) = E. Ta lại có E->D (từ E->DC), thỏa mãn E->R3. Quá trình đạt kết quả bao phủ trọn vẹn ABCDE, không mất thông tin. Về bảo toàn phụ thuộc: Dù AB->CD bị gãy trực tiếp, nhưng hệ thống lược đồ C->E, E->D... vẫn duy trì sức mạnh dẫn xuất khôi phục lại tập F gốc. Phép tách đạt cả 2 chỉ tiêu học thuật tối cao (Đáp án D)."
+    "correct": "B",
+    "explanation": "Kiểm tra bảo toàn thông tin: R1(ABC) ∩ R2(CE) = C; vì C->E thuộc F nên (R1∩R2)->R2, thỏa điều kiện. Hợp R1∪R2 = ABCE, giao với R3(DE) là E; vì E->DC nên E->D, thỏa điều kiện tiếp theo. Vậy phép tách BẢO TOÀN THÔNG TIN. Kiểm tra bảo toàn phụ thuộc hàm: chiếu F lên các lược đồ con thu được G = {A->BC (vì A là khóa của R1), C->E (từ R2), E->D (từ R3)}. Từ G, bao đóng (E)+ chỉ cho {D,E}, không suy ra được C, nên phần E->C của phụ thuộc hàm gốc E->DC KHÔNG được bảo toàn. Vậy phép tách KHÔNG BẢO TOÀN tập phụ thuộc hàm. Kết luận: Bảo toàn thông tin, không bảo toàn tập phụ thuộc hàm - đáp án B."
   },
   {
     "Ques": "Cho SQL: SELECT P.pname FROM P, SP WHERE P.pid  = SP.pid  AND SP.sid = 'S1' Phương án nào tối ưu nhất ?",
@@ -1404,8 +1394,8 @@
       "B": "Bảo toàn tập phụ thuộc hàm và không làm mất mát thông tin",
       "C": "Làm mất mát thông tin"
     },
-    "correct": "A",
-    "explanation": "Điều này phản ánh sự thiếu đồng nhất trong bộ đề thi gốc. Khảo sát thực tế: Giao của R1 và R2 là B. Có B->C thuộc F, (R1∩R2)->R2, nên chắc chắn KHÔNG mất thông tin. Về phụ thuộc hàm F: R1 giữ A->B và C->A (qua B), R2 giữ B->C và C->B. Hợp của F1 và F2 suy ngược lại được tập F. Phép toán toán học chứng minh nó bảo toàn 100% CẢ HAI yếu tố. Tuy nhiên, ở phiên bản đáp án này, hệ thống chốt đáp án A (Không bảo toàn). Đây là lỗi của ngân hàng đề."
+    "correct": "B",
+    "explanation": "Xét R(A,B,C), F={A->B;B->C;C->A}, tách thành R1(AB), R2(BC). Giao R1∩R2 = B; vì B->C thuộc F nên (R1∩R2)->R2, phép tách BẢO TOÀN THÔNG TIN. Về phụ thuộc hàm: R1 chứa A->B và (qua C->A, B->C) suy ra được B->A; R2 chứa B->C và suy ra được C->B. Hợp các phụ thuộc hàm chiếu lên R1, R2 cho phép suy dẫn lại toàn bộ F ban đầu (kể cả C->A, suy từ C->B và B->A). Vậy phép tách cũng BẢO TOÀN TẬP PHỤ THUỘC HÀM. Kết luận: đáp án đúng là B (Bảo toàn tập phụ thuộc hàm và không làm mất mát thông tin)."
   },
   {
     "Ques": "Cho sơ đồ S(U,F), với U={A,B,C,D,E}, với tập phụ thuộc hàm F={AE->D, A->E, D->C}. Sau khi chuẩn hóa S về dạng chuẩn 3 bảo toàn thông tin và phụthuộc hàm, gọi X là số sơ đồ con và gọi Y là số lần xuất hiện của A trong tất cả sơ đồ con đó. Hỏi X+Y=? (1 Điểm)",
@@ -1416,8 +1406,8 @@
       "D": "9",
       "E": "8"
     },
-    "correct": "A",
-    "explanation": "Thuật toán chuẩn hóa 3NF: Phủ tối thiểu Fm = {A->D, A->E, D->C}. Nhóm theo vế trái chung: Tạo R1(ADE) và R2(DC). Tìm khóa gốc: Khóa là AB. Không sơ đồ nào chứa khóa, bổ sung R3(AB). Ta có X=3 lược đồ (ADE, DC, AB). Thuộc tính A có mặt ở R1 và R3, do đó Y=2. Tính tổng: X+Y = 5. Hệ thống đáp án đánh giá là A (6) có thể xuất phát từ việc tính toán thiếu tối ưu hóa nhóm ở khâu tạo lược đồ (vd tách AD, AE rời rạc X=4, Y=3). Sinh viên bắt buộc lưu ý đáp án tĩnh này."
+    "correct": "B",
+    "explanation": "Tìm phủ tối thiểu: Fm = {A->D, A->E, D->C} (vì AE->D rút gọn còn A->D do A->E đã có sẵn E). Nhóm theo vế trái chung: R1(A,D,E), R2(D,C). Tìm khóa của U={A,B,C,D,E}: vì B không xuất hiện ở vế phải bất kỳ FD nào, B phải có trong mọi khóa; kiểm tra (AB)+ = {A,B,C,D,E} = U, nên khóa là AB. Vì AB không nằm trọn trong R1 hay R2, cần bổ sung R3(A,B). Vậy X = 3 (R1, R2, R3), và A xuất hiện ở R1 và R3 nên Y = 2. X+Y = 3+2 = 5. Vì 5 không có trong các lựa chọn số cụ thể (6, 7, 9, 8), đáp án đúng là 'Đáp án khác'."
   },
   {
     "Ques": "Hãy cho biết có quy tắc tương tự với phép chọn và phép giao không? (1 Điểm)",
